@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "weather": {
+      "command": "/Users/aref/miniconda3/bin/python3",
+      "args": [
+        "-m",
+        "mcp_weather_server"
+      ]
+    },
+    "Greetings": {
+      "command": "/Users/aref/miniconda3/bin/mcp",
+      "args": [
+        "run",
+        "/Users/aref/Documents/GitHub/mcp-acp/tool/server.py"
+      ],
+      "env": {
+        "API_KEY": "xxx"
+      }
+    }
+  }
+}

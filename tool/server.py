@@ -9,4 +9,5 @@ class Greeting(BaseModel):
 @mcp.tool("Greetings")
 def greetings (name:str) -> Greeting:
     """A tool function that accepts a paratamer called name and returns a personalised greeting message."""
-    return  Greeting(message= "Hello, {name}")
+    return  Greeting(message= f"Hello, {name}")
+

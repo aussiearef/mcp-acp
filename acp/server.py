@@ -6,11 +6,10 @@ from beeai_framework.agents.react import ReActAgent
 from beeai_framework.memory.token_memory import TokenMemory
 
 
-
 server = Server()
 
 @server.agent("MeaningAgent")
-async def meaning(word:str) -> str:
+async def meaning(words: Message) -> str:
     """A tool function that accepts a parameter called word and returns its meaning."""
 
     #supported llm names are "ollama", "openai", "watsonx", "groq", "xai", "vertexai", "amazon_bedrock", "anthropic", "azure_openai", "mistralai"
@@ -18,7 +17,7 @@ async def meaning(word:str) -> str:
 
     memory = TokenMemory(llm)
     agent = ReActAgent(llm=llm, tools=[], memory=memory)
-    response = await agent.run(prompt=f"Find the meaning of the word: {word}. Be concise and return one sentence.",)
+    response = await agent.run(prompt=f"Find the meaning of the word: {words[0]}. Be concise and return one sentence.",)
     return response.result.text
 
-server.run() # default port is 8000
+server.run() 

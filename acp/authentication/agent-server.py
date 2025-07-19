@@ -17,3 +17,5 @@ async def myagent(input: Message , context:Context):
     
     # Write custom code to validatte the authentication token
     pass
+
+server.run()

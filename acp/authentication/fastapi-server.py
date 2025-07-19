@@ -27,7 +27,7 @@ async def myagent(input : Message = Depends(authenticate),
                   context: Context = None):
     pass
 
-
+server.run()
 
 
 

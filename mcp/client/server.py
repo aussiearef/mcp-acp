@@ -1,4 +1,4 @@
-from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp import FastMCP , Context
 from pydantic import BaseModel
 import asyncio
 
@@ -10,9 +10,8 @@ class Greeting(BaseModel):
 @mcp.tool("Greetings")
 def greetings (name:str) -> Greeting:
     """A tool function that accepts a parameter called name and returns a personalised greeting message."""
-    return  Greeting(message= f"Hello, {name}")
 
-#mcp.run(transport='streamable-http')
+    return  Greeting(message= f"Hello, {name}")
 
 async def main():
     await mcp.run_streamable_http_async()

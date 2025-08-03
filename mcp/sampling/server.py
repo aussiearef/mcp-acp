@@ -4,7 +4,7 @@ from mcp.types import SamplingMessage, TextContent
 mcp = FastMCP(name="Sampling Example")
 
 @mcp.tool()
-async def generate_poem(topic: str, ctx: Context) -> SamplingMessage:
+async def generate_poem(topic: str, ctx: Context) -> str:
     prompt = f"Write a short poem about {topic}"
 
     result = await ctx.session.create_message(

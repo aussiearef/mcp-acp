@@ -31,7 +31,6 @@ async def greetings(name: str, ctx: Context) -> Greeting:
     """A tool function that accepts a parameter called name and returns a personalised greeting message."""
     headers = get_http_headers()
     authorization_header = headers.get("Authorization")
-    token_name = "Unknown"
 
     if authorization_header and authorization_header.startswith("Bearer "):
         token = authorization_header.replace("Bearer ", "", 1)

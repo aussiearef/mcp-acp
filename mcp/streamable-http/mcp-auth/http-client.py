@@ -31,7 +31,7 @@ async def main():
     scopes = None
 
     token = await get_bearer_token(client_id, client_secret, token_endpoint, scopes)
-
+    print(token)
     # Connect to MCP server with the obtained token
     async with streamablehttp_client(
         "http://localhost:8000/mcp",

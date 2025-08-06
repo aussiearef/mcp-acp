@@ -8,7 +8,7 @@ This GitHub repository belongs to an online course called
 
 ---
 
-## 📌 Topics Covered in the Course
+## Topics Covered in the Course
 
 ### Section 1: Introduction
 - **Lecture 1:** Introduction *(Preview enabled)*

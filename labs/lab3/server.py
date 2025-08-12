@@ -24,7 +24,6 @@ class MetricsResponse(BaseModel):
 
 class LogEntry(BaseModel):
     t: str
-    level: str
     msg: str
 
 class LogsResponse(BaseModel):

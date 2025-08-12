@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from datetime import datetime, timedelta
 import random
 
-app = FastMCP(name="observability-mcp", version="1.0.0")
+app = FastMCP(name="observability-mcp")
 
 class Alert(BaseModel):
     id: str

@@ -36,14 +36,20 @@ class LogsResponse(BaseModel):
 def iso_now_minus(minutes: int) -> str:
     return (datetime.now(timezone.utc) - timedelta(minutes=minutes)).isoformat().replace("+00:00", "Z")
 
-
-@app.tool(name="list_alerts", title="List current alerts for orders-api.")
-def list_alerts() -> list[Alert]:
-    return [
-        Alert(id="A-CPU-1001",  service="orders-api",  kind="high_cpu",                 severity="high"),
-        Alert(id="A-MEM-1002",  service="orders-api",  kind="high_memory_utilisation",  severity="medium"),
-        Alert(id="A-DISK-1003", service="orders-api",  kind="low_disk_space",           severity="medium"),
+@app.tool(
+    name="list_alerts",
+    title="List current alerts for orders-api.",
+    description="Return ALL alerts as a markdown table. Do not summarize."
+)
+def list_alerts() -> str:
+    rows = [
+        "| id | service | kind | severity |",
+        "|---|---|---|---|",
+        "| A-CPU-1001 | orders-api | high_cpu | high |",
+        "| A-MEM-1002 | orders-api | high_memory_utilisation | medium |",
+        "| A-DISK-1003 | orders-api | low_disk_space | medium |",
     ]
+    return "\n".join(rows)
 
 @app.tool(name="get_metrics", title="Return a small synthetic series for orders-api.")
 def get_metrics(metric: str) -> MetricsResponse:

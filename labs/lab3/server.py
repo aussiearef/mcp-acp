@@ -12,7 +12,6 @@ class Alert(BaseModel):
     service: str        # always "orders-api"
     kind: str           # "high_cpu" | "high_memory_utilisation" | "low_disk_space"
     severity: str       # "low" | "medium" | "high"
-    started_at: str     # ISO-8601 (Z)
 
 class SeriesPoint(BaseModel):
     t: str              # ISO-8601 (Z)
@@ -81,4 +80,4 @@ def get_logs() -> LogsResponse:
 
 
 if __name__ == "__main__":
-    app.run(transport="streamable-http")
+   app.run(transport="streamable-http")

@@ -2,7 +2,7 @@ from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel
 import asyncio
 
-mcp = FastMCP(stateless_http=True, port=8000)
+mcp = FastMCP(stateless_http=True, port=8000 )
 
 class Greeting(BaseModel):
     message: str

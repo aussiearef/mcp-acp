@@ -17,29 +17,18 @@ class SeriesPoint(BaseModel):
     t: str              # ISO-8601 (Z)
     v: float            # percentage
 
-class MetricsResponse(BaseModel):
-    service: str        # always "orders-api"
-    metric: str         # "cpu" | "memory" | "disk"
-    series: list[SeriesPoint]
-
 class LogEntry(BaseModel):
     t: str
     msg: str
 
-class LogsResponse(BaseModel):
-    service: str       
-    level: str
-    lines: list[LogEntry]
-
-
+# ===== Helpers =====
 def iso_now_minus(minutes: int) -> str:
     return (datetime.now(timezone.utc) - timedelta(minutes=minutes)).isoformat().replace("+00:00", "Z")
 
-
 def _dump(m):
-    # Pydantic v2 uses .model_dump(); v1 uses .dict()
     return m.model_dump() if hasattr(m, "model_dump") else m.dict()
 
+# ===== Tools =====
 @app.tool(name="list_alerts", title="List current alerts for orders-api.")
 def list_alerts() -> list[dict]:
     alerts = [
@@ -50,27 +39,25 @@ def list_alerts() -> list[dict]:
     return [_dump(a) for a in alerts]
 
 @app.tool(name="get_metrics", title="Return a small synthetic series for orders-api.")
-def get_metrics(metric: str) -> MetricsResponse:
-
+def get_metrics(metric: str) -> dict:
     base_map = {"cpu": 55, "memory": 60, "disk": 80}
     base = base_map.get(metric, 50)
-    series: list[SeriesPoint] = []
-
+    series = []
     for i in range(12):
         extra = 0.0
         if metric == "cpu" and i >= 8:
-            extra = 30                   
+            extra = 30
         if metric == "memory" and i >= 9:
-            extra = 15                  
+            extra = 15
         if metric == "disk" and i >= 6:
-            extra = (i - 5) * 2         
+            extra = (i - 5) * 2
         val = max(0, min(100, base + extra + random.uniform(-2, 2)))
-        series.append(SeriesPoint(t=iso_now_minus(12 - i), v=val))
-
-    return MetricsResponse(service="orders-api", metric=metric, series=series)
+        series.append(_dump(SeriesPoint(t=iso_now_minus(12 - i), v=val)))
+    return {"service": "orders-api", "metric": metric, "series": series}
 
 @app.tool(name="get_logs", title="Return a few recent log lines for orders-api.")
-def get_logs() -> LogsResponse:
+def get_logs() -> dict:
+    level = "error"  # default; no arg needed
     messages = [
         "worker saturation; throttling requests",
         "timeout calling inventory-service",
@@ -79,9 +66,8 @@ def get_logs() -> LogsResponse:
         "gc pause > 500ms",
         "failed to write cache file",
     ]
-    lines = [LogEntry(t=iso_now_minus(i + 1), msg=random.choice(messages)) for i in range(6)]
-    return LogsResponse(service="orders-api",  lines=lines)
-
+    lines = [_dump(LogEntry(t=iso_now_minus(i + 1), msg=random.choice(messages))) for i in range(6)]
+    return {"service": "orders-api", "level": level, "lines": lines}
 
 if __name__ == "__main__":
-   app.run(transport="streamable-http")
+    app.run(transport="streamable-http")

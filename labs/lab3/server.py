@@ -1,27 +1,27 @@
 # server.py
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import random
 
-app = FastMCP(name="observability-mcp", host="0.0.0.0" , port=8000)
+app = FastMCP(name="observability-mcp", host="0.0.0.0", port=8000)
 
+# ===== Models =====
 class Alert(BaseModel):
     id: str
-    service: str
+    service: str        # always "orders-api"
     env: str
-    kind: str
-    severity: str
-    started_at: str
+    kind: str           # "high_cpu" | "high_memory_utilisation" | "low_disk_space"
+    severity: str       # "low" | "medium" | "high"
+    started_at: str     # ISO-8601 (Z)
 
 class SeriesPoint(BaseModel):
-    t: str
-    v: float
+    t: str              # ISO-8601 (Z)
+    v: float            # percentage
 
 class MetricsResponse(BaseModel):
-    service: str
-    metric: str
-    window: str
+    service: str        # always "orders-api"
+    metric: str         # "cpu" | "memory" | "disk"
     series: list[SeriesPoint]
 
 class LogEntry(BaseModel):
@@ -30,63 +30,59 @@ class LogEntry(BaseModel):
     msg: str
 
 class LogsResponse(BaseModel):
-    service: str
+    service: str       
     level: str
-    window: str
     lines: list[LogEntry]
 
-class Incident(BaseModel):
-    id: str
-    summary: str
-    severity: str
-    status: str = "OPEN"
 
-@app.tool(name="list_alerts", title="Returns the list of all alerts.")
+def iso_now_minus(minutes: int) -> str:
+    return (datetime.now(timezone.utc) - timedelta(minutes=minutes)).isoformat().replace("+00:00", "Z")
+
+
+@app.tool(name="list_alerts", title="List current alerts for orders-api.")
 def list_alerts(env: str) -> list[Alert]:
-    now = datetime.now(datetime.timetzone.utc)
+    now12 = iso_now_minus(12)
+    now25 = iso_now_minus(25)
+    now40 = iso_now_minus(40)
     return [
-        Alert(
-            id="A-1001", service="orders-api", env=env, kind="cpu_high",
-            severity="high", started_at=(now - timedelta(minutes=12)).isoformat()+"Z"
-        ),
-        Alert(
-            id="A-1002", service="payments", env=env, kind="latency_spike",
-            severity="medium", started_at=(now - timedelta(minutes=30)).isoformat()+"Z"
-        ),
+        Alert(id="A-CPU-1001",  service="orders-api", env=env, kind="high_cpu",                 severity="high",   started_at=now12),
+        Alert(id="A-MEM-1002",  service="orders-api", env=env, kind="high_memory_utilisation",  severity="medium", started_at=now25),
+        Alert(id="A-DISK-1003", service="orders-api", env=env, kind="low_disk_space",           severity="medium", started_at=now40),
     ]
 
-@app.tool(name="get_metrics", title="returns the metrics of orders-api.")
-def get_metrics(service: str, metric: str, window: str) -> MetricsResponse:
-    # Generate 15m of 1-min points with a spike
-    now = datetime.utcnow()
-    points = []
-    for i in range(15):
-        t = (now - timedelta(minutes=15-i)).isoformat()+"Z"
-        base = 35 if service != "orders-api" else 55
-        spike = 40 if (service=="orders-api" and i>10) else 0
-        val = base + spike + random.uniform(-3, 3)
-        points.append(SeriesPoint(t=t, v=max(0, min(100, val))))
-    return MetricsResponse(service=service, metric=metric, window=window, series=points)
+@app.tool(name="get_metrics", title="Return a small synthetic series for orders-api.")
+def get_metrics(metric: str) -> MetricsResponse:
 
-@app.tool(name="get_logs", title="returns log entries of orders-api.")
-def get_logs(service: str, level: str, window: str) -> LogsResponse:
-    now = datetime.utcnow()
-    msgs = [
-        "timeout from inventory-service",
+    base_map = {"cpu": 55, "memory": 60, "disk": 80}
+    base = base_map.get(metric, 50)
+    series: list[SeriesPoint] = []
+
+    for i in range(12):
+        extra = 0.0
+        if metric == "cpu" and i >= 8:
+            extra = 30                    # spike after point 8
+        if metric == "memory" and i >= 9:
+            extra = 15                    # rise near the end
+        if metric == "disk" and i >= 6:
+            extra = (i - 5) * 2           # rising utilization -> less free space
+        val = max(0, min(100, base + extra + random.uniform(-2, 2)))
+        series.append(SeriesPoint(t=iso_now_minus(12 - i), v=val))
+
+    return MetricsResponse(service="orders-api", metric=metric, series=series)
+
+@app.tool(name="get_logs", title="Return a few recent log lines for orders-api.")
+def get_logs(level: str) -> LogsResponse:
+    messages = [
+        "worker saturation; throttling requests",
+        "timeout calling inventory-service",
         "db connection pool exhausted",
-        "upstream 502 from pricing",
-        "retry budget exceeded"
+        "retry budget exceeded",
+        "gc pause > 500ms",
+        "failed to write cache file",
     ]
-    lines = [
-        LogEntry(t=(now - timedelta(minutes=i)).isoformat()+"Z", level=level, msg=random.choice(msgs))
-        for i in range(1, 9)
-    ]
-    return LogsResponse(service=service, level=level, window=window, lines=lines)
+    lines = [LogEntry(t=iso_now_minus(i + 1), level=level, msg=random.choice(messages)) for i in range(6)]
+    return LogsResponse(service="orders-api", level=level, lines=lines)
 
-@app.tool(name="open_incident", title="creates an incident if alert is persistent in orders-api.")
-def open_incident(summary: str, severity: str) -> Incident:
-    return Incident(id=f"INC-{random.randint(2000,9999)}", summary=summary, severity=severity)
 
 if __name__ == "__main__":
-    # Default: listens on 0.0.0.0:8000 and exposes /mcp
-    app.run(transport='streamable-http')
+    app.run(transport="streamable-http")

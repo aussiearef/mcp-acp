@@ -1,0 +1,5 @@
+acp_sdk
+beeai_framework
+mcp
+fastmcp
+httpx>=0.28.1

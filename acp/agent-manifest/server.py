@@ -30,7 +30,7 @@ server = Server()
               )
 
 async def meaning(words: Message) -> str:
-    llm= ChatModel.from_name("openai:gpt-4o")  
+    llm= ChatModel.from_name("openai:gpt-5-mini")  
 
     memory = TokenMemory(llm)
     agent = ReActAgent(llm=llm, tools=[], memory=memory)

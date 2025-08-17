@@ -99,7 +99,7 @@
       try {
         const res = await fetch("http://localhost:9000/runs", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" , "x-api-key":"123"}, // api key in code only for demo. 
           body: JSON.stringify({
             agent_name: "SimAssistant",
             input: [

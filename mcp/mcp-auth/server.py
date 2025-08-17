@@ -1,4 +1,4 @@
-from mcp.server.fastmcp import FastMCP, Context
+from mcp.server.fastmcp import FastMCP
 from fastmcp.server.dependencies import get_http_headers
 from pydantic import BaseModel
 import asyncio
@@ -27,7 +27,7 @@ async def get_public_key(kid: str) -> dict:
         raise ValueError(f"No public key found for kid: {kid}")
 
 @mcp.tool("Greetings")
-async def greetings(name: str, ctx: Context) -> Greeting:
+async def greetings(name: str) -> Greeting:
     """A tool function that accepts a parameter called name and returns a personalised greeting message."""
     headers = get_http_headers()
     authorization_header = headers.get("Authorization")

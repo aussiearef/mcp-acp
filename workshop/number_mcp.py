@@ -47,12 +47,9 @@ async def set_number_status(number: str, new_status: str  ) -> Status:
         result.status = new_status
     else:
         result.status = "not_found"
-
-
     return result
     
            
-
 # FastAPI middleware to check x-api-key
 class APIKeyMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
@@ -61,7 +58,7 @@ class APIKeyMiddleware(BaseHTTPMiddleware):
 
         if provided_key != expected_key:
             return JSONResponse(
-                {"error": "Invalid or missing API key"},
+                {"error": "Invalid or missing API key!"},
                 status_code=401,
             )
 

@@ -14,6 +14,7 @@ from beeai_framework.tools.mcp import MCPTool
 
 from mcp.client.streamable_http import streamablehttp_client
 from mcp import ClientSession
+
 from authlib.jose import  JsonWebToken, JsonWebKey, JWTClaims
 from authlib.jose.util import extract_header
 
@@ -24,7 +25,7 @@ mcp_url = os.environ.get("MCP_URL", "http://localhost:8000/mcp/")
 
 OAUTH_ISSUER = "https://accounts.google.com"
 JWKS_URI = "https://www.googleapis.com/oauth2/v3/certs"
-AUDIENCE = "283181126911-70gkiul5kaanao1kt3pmu3urr381fphb.apps.googleusercontent.com"    # YOUR_GOOGLE_CLIENT_ID
+AUDIENCE = ""    # YOUR_GOOGLE_CLIENT_ID
 
 
 @agent(name="SimAssistant",
@@ -33,11 +34,11 @@ AUDIENCE = "283181126911-70gkiul5kaanao1kt3pmu3urr381fphb.apps.googleusercontent
     output_content_types=["text/plain"])
 async def sim_assistant(msg: Message,  context:Context) -> str:
     user_text = str(msg[0])
-    
-    await authenticate(context) # reads Authorization header from context and validates it.
+
 
     # Connect to MCP and fetch status tool
-    async with streamablehttp_client(mcp_url ) as (read_stream, write_stream, _):
+    async with streamablehttp_client(mcp_url, 
+                                     headers={"x-api-key":"123"}) as (read_stream, write_stream, _):
         async with ClientSession(read_stream, write_stream) as session:
             await session.initialize()
             mcp_tools: List[AnyTool] = await MCPTool.from_client(session=session)

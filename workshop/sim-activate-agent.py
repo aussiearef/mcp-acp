@@ -14,9 +14,18 @@ from beeai_framework.tools.mcp import MCPTool
 
 from mcp.client.streamable_http import streamablehttp_client
 from mcp import ClientSession
+from authlib.jose import  JsonWebToken, JsonWebKey, JWTClaims
+from authlib.jose.util import extract_header
+
+import httpx
 
 
 mcp_url = os.environ.get("MCP_URL", "http://localhost:8000/mcp/")
+
+OAUTH_ISSUER = "https://accounts.google.com"
+JWKS_URI = "https://www.googleapis.com/oauth2/v3/certs"
+AUDIENCE = "283181126911-70gkiul5kaanao1kt3pmu3urr381fphb.apps.googleusercontent.com"    # YOUR_GOOGLE_CLIENT_ID
+
 
 @agent(name="SimAssistant",
     description="Activate Australian SIMs. MCP is used only to fetch SIM status.",
@@ -25,20 +34,10 @@ mcp_url = os.environ.get("MCP_URL", "http://localhost:8000/mcp/")
 async def sim_assistant(msg: Message,  context:Context) -> str:
     user_text = str(msg[0])
     
-    try:
-        await authenticate(context)
-    except ACPError as e:
-        return str(e)
-    
-
-    mcp_api_key = os.environ.get("mcp_api_key")
-    if mcp_api_key==None:
-        raise ACPError("Please provide the mcp_api_key environment variable.")
+    await authenticate(context) # reads Authorization header from context and validates it.
 
     # Connect to MCP and fetch status tool
-    async with streamablehttp_client(mcp_url, 
-                headers={"x-api-key":mcp_api_key}       
-                ) as (read_stream, write_stream, _):
+    async with streamablehttp_client(mcp_url ) as (read_stream, write_stream, _):
         async with ClientSession(read_stream, write_stream) as session:
             await session.initialize()
             mcp_tools: List[AnyTool] = await MCPTool.from_client(session=session)
@@ -79,13 +78,39 @@ async def sim_assistant(msg: Message,  context:Context) -> str:
 
 
 async def authenticate(ctx: Context):
-    auth_header = ctx.request.headers.get("x-api-key")
-    acp_api_key= os.environ.get("acp_api_key")
-    if acp_api_key == None :
-        raise ACPError(Error(code="401", message="acp_api_key is missing!"))
+    authorization_header = ctx.request.headers.get("Authorization")
     
-    if auth_header != acp_api_key:
-        raise ACPError(Error(code="401", message="Authentication key not provided"))
+    if authorization_header:
+        token = authorization_header.removeprefix("Bearer ")
+        token_obj = JsonWebToken(algorithms=["RS256"])
+        
+        #header = JWSHeader(header= token.split(".")[0], protected=None)
+        header_segment = token.split(".")[0]
+        header = extract_header(header_segment.encode("utf-8"), error_cls=ACPError)
+        kid = header.get("kid")
+
+        if not kid:
+            raise ValueError("No kid in token header")
+
+        jwk = await get_public_key(kid)
+        public_key = JsonWebKey.import_key(jwk)
+
+        # Decode the token with the public key. If signature invalid, exception is raised.
+        claims: JWTClaims = token_obj.decode(token, public_key)
+        # We do not read the claims. But if you want to check name, email ,id etc, you can read the claims.
+
+
+async def get_public_key(kid: str) -> dict:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(JWKS_URI)
+        response.raise_for_status()
+        keys = response.json()["keys"]
+
+        for key in keys:
+            if key["kid"] == kid:
+                return key
+        raise ValueError(f"No public key found for kid: {kid}")
+
 
 if __name__ == "__main__":
 

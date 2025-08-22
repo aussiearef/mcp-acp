@@ -1,9 +1,11 @@
-from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp import FastMCP 
+from mcp import McpError
 from fastmcp.server.dependencies import get_http_headers
 from pydantic import BaseModel
 import asyncio
 import httpx
 from authlib.jose import JsonWebToken, JsonWebKey, JWTClaims
+from authlib.jose.util import extract_header
 
 mcp = FastMCP(stateless_http=True)
 
@@ -37,7 +39,8 @@ async def greetings(name: str) -> Greeting:
         try:
             # Decode JWT to get kid
             token_obj = JsonWebToken(algorithms=["RS256"])
-            header = token_obj.decode(token, key=None, do_verify=False).header
+            header_segment = token.split(".")[0]
+            header = extract_header(header_segment.encode("utf-8"), error_cls=McpError)
             kid = header.get("kid")
             if not kid:
                 raise ValueError("No kid in token header")
@@ -49,8 +52,8 @@ async def greetings(name: str) -> Greeting:
             # Validate JWT
             claims: JWTClaims = token_obj.decode(token, public_key)
             claims.validate(iss=OAUTH_ISSUER, aud=AUDIENCE, required_scopes=None)
-            token_name = claims.get("sub", "Unknown")  # Use sub for Client Credentials Grant
-            print("Token:", token)
+            user_id = claims.get("sub", "Unknown")  # Use sub for Client Credentials Grant
+            print("User Id:", user_id)
             print("Kid:", kid)
             print("Claims:", claims)
         except Exception as e:

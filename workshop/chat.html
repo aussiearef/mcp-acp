@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>SIM Activation Chat</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <style>
+    #inputBox {
+    display: none; /* hidden until login */
+    }
+
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f9;
@@ -36,7 +42,6 @@
     .user { background: #d1e7ff; align-self: flex-end; }
     .bot { background: #e8e8e8; align-self: flex-start; }
     #inputBox {
-      display: flex;
       border-top: 1px solid #ccc;
     }
     #inputBox input {
@@ -76,6 +81,12 @@
 </head>
 <body>
   <div id="chat">
+    <div id="g_id_onload"
+      data-client_id="283181126911-70gkiul5kaanao1kt3pmu3urr381fphb.apps.googleusercontent.com"
+      data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
+
     <div id="messages"></div>
     <div id="spinner"></div>
     <div id="inputBox">
@@ -95,11 +106,13 @@
 
       // Show spinner
       showSpinner();
-
+      debugger;
+      const idToken = localStorage.getItem("google_id_token");
       try {
         const res = await fetch("http://localhost:9000/runs", {
           method: "POST",
-          headers: { "Content-Type": "application/json" , "x-api-key":"123"}, // api key in code only for demo. 
+          headers: { "Content-Type": "application/json" ,
+           "Authorization": `Bearer ${idToken}`}, // api key in code only for demo. 
           body: JSON.stringify({
             agent_name: "SimAssistant",
             input: [
@@ -143,6 +156,20 @@
     function hideSpinner() {
       document.getElementById("spinner").style.display = "none";
     }
+
+    
   </script>
+
+  <script>
+    function handleCredentialResponse(response) {
+      //  JWT (ID token) from Google
+      const idToken = response.credential;
+      // Save idToken for later fetch calls
+      localStorage.setItem("google_id_token", idToken);
+      document.getElementById("inputBox").style.display = "flex";
+    }
+</script>
+
+
 </body>
 </html>

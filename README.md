@@ -1,10 +1,10 @@
-# Mastering MCP and ACP in AI Agents
+# Mastering MCP in AI Agents
 
 ![Course Banner](https://raw.githubusercontent.com/aussiearef/mcp-acp/a2ab819366954fe40bb9d5d67ae4bf30dd2920b0/logo.png)
 
 
 This GitHub repository belongs to an online course called  
-[**Mastering MCP and ACP in AI Agents**](https://www.udemy.com/course/mcp-and-acp-ai-agents/?referralCode=796D178806E9010D7917).  
+[**Mastering MCP in AI Agents**](https://www.udemy.com/course/mcp-and-acp-ai-agents/?referralCode=796D178806E9010D7917).  
 
 ---
 
@@ -36,23 +36,7 @@ This GitHub repository belongs to an online course called
 - **Lecture 19:** Developing MCP Clients  
 - **Lecture 20:** Securing HTTP MCP Servers and Clients with Open Authentication (OAuth)  
 - **Lecture 21:** Sampling in MCP  
-
-### Section 4: Exploring Agent Communication Protocol (ACP)
-- **Lecture 22:** About Agent Communication Protocol (ACP)  
-- **Lecture 23:** Development of ACP  
-- **Lecture 24:** Agent Run Lifecycle in ACP  
-- **Lecture 25:** Let's Create an ACP-compatible AI Agent  
-- **Lecture 26:** Using Large Language Models (LLM) in ACP-compatible Agents  
-- **Lecture 27:** Agent Manifests and Discovery in ACP  
-- **Lecture 28:** Message Structure in ACP  
-- **Lecture 29:** Stateful ACP Agents  
-- **Lecture 30:** Integrating MCP Tools with AI Agents and Large Language Models  
-
-### Section 5: Production Grade ACP Servers
-- **Lecture 31:** Introduction  
-- **Lecture 32:** Scalability of ACP Servers  
-- **Lecture 33:** Security in ACP Servers  
-- **Lecture 34:** Implementing Observability in ACP Servers  
+  
 
 ### Section 6: Course Wrap-Up
 - **Lecture 35:** Ethical Considerations of MCP  

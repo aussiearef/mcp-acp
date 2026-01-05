@@ -1,6 +1,6 @@
 # Mastering MCP in AI Agents
 
-![Course Banner](https://raw.githubusercontent.com/aussiearef/mcp-acp/a2ab819366954fe40bb9d5d67ae4bf30dd2920b0/logo.png)
+![Course Banner](https://img-c.udemycdn.com/course/750x422/6682461_0046_2.jpg)
 
 
 This GitHub repository belongs to an online course called  

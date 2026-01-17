@@ -2,13 +2,14 @@ from a2a.server.apps import A2AFastAPIApplication
 from a2a.server.request_handlers import DefaultRequestHandler
 from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCard, AgentCapabilities, AgentSkill
+from LongRunningExecutor import LongRunningExecutor
 
-if __name__ =="__main__":
-    agent_skill = AgentSkill(
+if __name__=="__main__":
+    agent_skill= AgentSkill(
         id="long_running_skill",
         name="SES Skill",
-        description="I demonstrate SES lifecycle event",
-        tags=["SES", "Task"]
+        description="I demonstrate SES lifecycle events",
+        tags=["SES" , "Task"]
     )
 
     agent_capability = AgentCapabilities(streaming=True)
@@ -24,16 +25,15 @@ if __name__ =="__main__":
         default_output_modes=["text"]
     )
 
-    from LongRunningExecutor import LongRunningExecutor
     request_handler = DefaultRequestHandler(
         agent_executor= LongRunningExecutor(),
         task_store= InMemoryTaskStore()
     )
 
     server = A2AFastAPIApplication(
-        http_handler=request_handler,
+        http_handler= request_handler,
         agent_card= agent_card
     )
 
     import uvicorn
-    uvicorn.run(server.build(), host="0.0.0.0", port=9999)
+    uvicorn.run(server.build(), host="0.0.0.0" , port=9999)

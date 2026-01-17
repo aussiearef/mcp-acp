@@ -8,6 +8,7 @@ from a2a.types import (
     TaskArtifactUpdateEvent,
     TaskStatusUpdateEvent,
     TaskState,
+    TaskStatus,
     Artifact
 )
 
@@ -25,8 +26,9 @@ class LongRunningExecutor(AgentExecutor):
         # 2. Signal Task Submitted
         await event_queue.enqueue_event(TaskStatusUpdateEvent(
             task_id= context.task_id,
-            status=TaskState.submitted,
-            metadata="Submitted...",
+            context_id= context.context_id,
+            status=TaskStatus(state= TaskState.submitted) ,
+            metadata={"info" : "Submitted..."},
             final=False
         ))
 
@@ -34,15 +36,16 @@ class LongRunningExecutor(AgentExecutor):
         for i in range (1,4):
                 await event_queue.enqueue_event(TaskStatusUpdateEvent(
                 task_id= context.task_id,
-                status=TaskState.working,
-                metadata="Working...",
+                context_id= context.context_id,
+                status=TaskStatus(state= TaskState.working),
+                metadata={"info" : "Working..."},
                 final=False
              ))
 
                 await asyncio.sleep(2) # Long running work
 
-                artifact = Artifact(uuid4().hex , name="Artifact", description="Partial Result")
-                artifact.parts.append(TextPart('This is part of the result'))
+                artifact_parts = [TextPart(text='This is part of the result')]
+                artifact = Artifact(artifact_id= uuid4().hex , name="Artifact", description="Partial Result", parts=artifact_parts)
 
                 await event_queue.enqueue_event(TaskArtifactUpdateEvent(
                     task_id= context.task_id,
@@ -51,12 +54,12 @@ class LongRunningExecutor(AgentExecutor):
 
                 ))
         
-        # 4. Return final status
-        # 5. Signal Task Submitted
+        # 5. Signal Task Completed
         await event_queue.enqueue_event(TaskStatusUpdateEvent(
             task_id= context.task_id,
-            status=TaskState.completed,
-            metadata="Completed...",
+            context_id= context.context_id,
+            status=TaskStatus(state= TaskState.completed),
+            metadata={"info" : "Completed..."},
             final=True
         ))
 

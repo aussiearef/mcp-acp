@@ -1,6 +1,6 @@
 
 # Workshop Instructions
-This directory includes a MCP server with two MCP tools, an ACP-compatible AI Agent, and a HTML/Javascript code to simulate a chat bot, where you can activate a SIM (mobile or cell phone) number.
+This directory includes a MCP server with two MCP tools, an A2A-compatible AI Agent, and a HTML/Javascript code to simulate a chat bot, where you can activate a SIM (mobile or cell phone) number.
 
 ## Setting up
 Follow these steps, after creating and activating a virtual Python environment:
@@ -21,28 +21,29 @@ Follow these steps, after creating and activating a virtual Python environment:
 
 7. Run `pip install -r requirements.txt` in the terminal, inside your virtual environment.
 8. Run `python db_create.py` to create an example database. Modify this code to insert your desired phone numbers.
-9. Run `python get_number_status.py`. You must have added mcp_api_key environment variable in Terminal beforehand.
-10. Run `python sim_activate_agent.py`. 
-11. Run `python agent-client.py` to test your ACP Agent locally. Edit code to corrext x-api-key's value. OPTIONAL.
-12. Run `python -m http.server 8080` to start a web server, so that you can run chat.html.
-13. Open a browser and navigate to `http://localhost:8080/chat.html`. 
+9. Create an environment variable called 'mcp_api_key'. Set its value to 123.
+10. Run `python number_mcp.py`. You must have added mcp_api_key environment variable in Terminal beforehand.
+11. Run `python sim_activate_agent.py`. 
+12. Run `python agent-client.py` to test your A2A Agent locally. Edit code to corrext x-api-key's value. OPTIONAL.
+13. Run `python -m http.server 8080` to start a web server, so that you can run chat.html.
+14. Open a browser and navigate to `http://localhost:8080/chat.html`. 
 
 ## Authentication
 
-1. MCP Server uses API KEY authentication method. Your ACP server must send x-api-key header to MCP server. The value of x-api-key is hard-coded in sim-activate-agent.py at line 41, for your convenience.
+1. MCP Server uses API KEY authentication method. Your A2A agent must send x-api-key header to MCP server. The value of x-api-key is hard-coded in sim-activate-agent.py at line 41, for your convenience.
 
 ```
 async with streamablehttp_client(mcp_url, 
                                      headers={"x-api-key":"123"}) as (read_stream, write_stream, _):
 ```
 
-In the MCP server code, number_mcp.py, you must have already set an environment variable called 'mcp_api_key'. The value of this environment value must match the value of x-api-key header that you will send to MCP server from ACP server.
+In the MCP server code, number_mcp.py, you must have already set an environment variable called 'mcp_api_key'. The value of this environment value must match the value of x-api-key header that you will send to MCP server from A2A agent.
 
 ```
 expected_key = os.environ.get("mcp_api_key")
 ```
 
-2. ACP server uses OAUTH 2.0 with Google. You must put your GOOGLE CLIENT ID in both chat.html, and in sim-activate-agent.py.
+2. A2A agent uses OAUTH 2.0 with Google. You must put your GOOGLE CLIENT ID in both chat.html, and in sim-activate-agent.py.
 
 ```
 <div id="g_id_onload"

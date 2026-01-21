@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -82,8 +81,8 @@
 <body>
   <div id="chat">
     <div id="g_id_onload"
-      data-client_id="". // <--- PUT YOUR GOOGLE CLIENT ID HERE
-      data-callback="handleCredentialResponse">
+      data-client_id="672494427139-cq9et5v7v80gh3eah0pmi57fe0hd19h6.apps.googleusercontent.com" 
+      data-callback="handleCredentialResponse" >
     </div>
     <div class="g_id_signin" data-type="standard"></div>
 
@@ -96,47 +95,66 @@
   </div>
 
   <script>
-    async function sendMessage() {
+    
+   async function sendMessage() {
       const input = document.getElementById("prompt");
       const text = input.value.trim();
       if (!text) return;
 
+      // Add user message to UI
       addMessage(text, "user");
       input.value = "";
-
-      // Show spinner
       showSpinner();
-      debugger;
+
       const idToken = localStorage.getItem("google_id_token");
-      try {
-        const res = await fetch("http://localhost:9000/runs", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" ,
-           "Authorization": `Bearer ${idToken}`}, // api key in code only for demo. 
-          body: JSON.stringify({
-            agent_name: "SimAssistant",
-            input: [
+
+      // Construct the strictly formatted A2A JSON-RPC payload
+      const payload = {
+        jsonrpc: "2.0",
+        id: crypto.randomUUID(), // Top-level request ID (required)
+        method: "message/send",
+        params: {
+          message: {
+            messageId: crypto.randomUUID(), // Internal message ID (required)
+            role: "user",
+            kind: "message", 
+            parts: [
               {
-                role: "user",
-                parts: [
-                  {
-                    content_type: "text/plain",
-                    content: text
-                  }
-                ]
+                kind: "text",
+                text: text
               }
-            ],
-            mode: "sync"
-          })
+            ]
+          }
+        }
+      };
+
+      try {
+        const res = await fetch("http://localhost:9000/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${idToken}`
+          },
+          body: JSON.stringify(payload)
         });
 
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`HTTP ${res.status}: ${errorText}`);
+        }
+
         const data = await res.json();
-        const reply = data?.output?.[0]?.parts?.[0]?.content || "(no response)";
+
+        const reply = 
+          data.result?.parts?.[0]?.text ?? 
+          "(no response)";
+
         addMessage(reply, "bot");
       } catch (err) {
+        debugger;
+        console.error("Connection Error:", err);
         addMessage("Error: " + err.message, "bot");
       } finally {
-        // Hide spinner
         hideSpinner();
       }
     }

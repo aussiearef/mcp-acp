@@ -16,12 +16,13 @@ class Status(BaseModel):
 
 app = FastMCP(name="get-sim-status-mcp", host="0.0.0.0", port=8000,)
 
-conn = sqlite3.connect("mcp-acp.db")
-cursor = conn.cursor()
+
 
 @app.tool(name="get_number_status", description="Gets a SIM card's (of a mobile number) status by SIM or mobile number")
 async def get_number_status(number: str) -> Status:
 
+    conn = sqlite3.connect("mcp-a2a.db" , check_same_thread=False)
+    cursor = conn.cursor()
     result = Status(number=number)
 
     try:
@@ -33,13 +34,16 @@ async def get_number_status(number: str) -> Status:
              result.status="not_found"
     except ValueError as e:
         result.status=str(e)
-      
+    cursor.close()  
     return result
 
 @app.tool(name="set_number_status", description="Sets a SIM card's (of a mobile number) status by SIM or mobile number.")
 async def set_number_status(number: str, new_status: str  ) -> Status:
     result = Status(number=number)
 
+    print("set_number_status")
+    conn = sqlite3.connect("mcp-a2a.db" , check_same_thread=False)
+    cursor = conn.cursor()
     cursor.execute("UPDATE numbers set status=? WHERE number = ?", (new_status, number))
     conn.commit()
 
@@ -47,22 +51,30 @@ async def set_number_status(number: str, new_status: str  ) -> Status:
         result.status = new_status
     else:
         result.status = "not_found"
+    cursor.close()
     return result
     
            
-# FastAPI middleware to check x-api-key
 class APIKeyMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        # Read the body
+        body = await request.body()
+        if body:
+            print(f"DEBUG MCP Body: {body.decode()}")
+
+        # Re-wrap the request so the next handler can read the body again
+        async def receive():
+            return {"type": "http.request", "body": body}
+
+        new_request = Request(request.scope, receive=receive)
+        
         provided_key = request.headers.get("x-api-key")
-        expected_key = os.environ.get("mcp_api_key")
+        expected_key = os.environ.get("mcp_api_key", "123")
 
         if provided_key != expected_key:
-            return JSONResponse(
-                {"error": "Invalid or missing API key!"},
-                status_code=401,
-            )
+            return JSONResponse({"error": "Unauthorized"}, status_code=401)
 
-        return await call_next(request)
+        return await call_next(new_request)
 
 
 async def main():

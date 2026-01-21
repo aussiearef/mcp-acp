@@ -21,7 +21,7 @@ class LongRunningExecutor(AgentExecutor):
         # 1. Read input from context
         user_text=""
         if context.message.parts:
-            user_text= getattr(context.message.parts[0] , 'text', '')
+            user_text= context.message.parts[0].model_dump()['text']
         
         # 2. Signal Task Submitted
         await event_queue.enqueue_event(TaskStatusUpdateEvent(

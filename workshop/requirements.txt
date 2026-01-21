@@ -1,7 +1,7 @@
 a2a_sdk[all]
-beeai_framework
+beeai-framework
+pydantic
 mcp
 fastmcp
 uvicorn
 httpx
-

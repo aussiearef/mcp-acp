@@ -4,42 +4,53 @@
 
 
 This GitHub repository belongs to an online course called  
-[**Mastering MCP in AI Agents**](https://www.udemy.com/course/mcp-and-acp-ai-agents/?referralCode=796D178806E9010D7917).  
+[**Mastering MCP and A2A for Smarter AI Agents**](https://www.udemy.com/course/mcp-and-a2a-ai-agents/?referralCode=796D178806E9010D7917).  
 
 ---
 
 ## Topics Covered in the Course
 
 ### Section 1: Introduction
-- **Lecture 1:** Introduction *(Preview enabled)*
-- **Lecture 2:** What is an AI Agent *(Preview enabled)*
-- **Lecture 3:** What is MCP *(Preview enabled)*
-- **Lecture 4:** What is ACP
-- **Lecture 5:** Why are ACP and MCP Related?
-- **Lecture 6:** Demonstration of Weather MCP in Claude Desktop *(Preview enabled)*
+- ** Introduction *(Preview enabled)*
+- ** What is an AI Agent *(Preview enabled)*
+- ** What is MCP *(Preview enabled)*
+- ** What is ACP
+- ** Why are ACP and MCP Related?
+- ** Demonstration of Weather MCP in Claude Desktop *(Preview enabled)*
 
 ### Section 2: Deep Dive into Model Context Protocol (MCP)
-- **Lecture 7:** MCP Architecture: The Host  
-- **Lecture 8:** MCP Architecture: The Client  
-- **Lecture 9:** MCP Architecture: The Server  
-- **Lecture 10:** The Underlying Protocols of MCP  
-- **Lecture 11:** MCP in Action with Claude Desktop  
+- ** MCP Architecture: The Host  
+- ** MCP Architecture: The Client  
+- ** MCP Architecture: The Server  
+- ** The Underlying Protocols of MCP  
+- ** MCP in Action with Claude Desktop  
 
 ### Section 3: Coding MCP Servers and Clients for Developers
-- **Lecture 12:** Setting Up Your Coding Environment  
-- **Lecture 13:** Coding an MCP Server Tool with Python  
-- **Lecture 14:** Coding MCP Server Resource with Python  
-- **Lecture 15:** Coding MCP Server Prompt with Python  
-- **Lecture 16:** Loading MCP Server into Claude Desktop  
-- **Lecture 17:** Streamable HTTP Transport in MCP Servers  
-- **Lecture 18:** Production-grade Deployment and Stateful MCP Servers  
-- **Lecture 19:** Developing MCP Clients  
-- **Lecture 20:** Securing HTTP MCP Servers and Clients with Open Authentication (OAuth)  
-- **Lecture 21:** Sampling in MCP  
-  
+- ** Setting Up Your Coding Environment  
+- ** Coding an MCP Server Tool with Python  
+- ** Coding MCP Server Resource with Python  
+- ** Coding MCP Server Prompt with Python  
+- ** Loading MCP Server into Claude Desktop  
+- ** Streamable HTTP Transport in MCP Servers  
+- ** Production-grade Deployment and Stateful MCP Servers  
+- ** Developing MCP Clients  
+- ** Securing HTTP MCP Servers and Clients with Open Authentication (OAuth)  
+- ** Sampling in MCP  
 
+### Section 4: Deep Dive into Google A2A (Agent to Agent) Protocol
+- ** Coding a basic A2A AI server agent.
+- ** Coding a basic A2A AI client agent.
+- ** Coding a long-running A2A server agent.
+- ** Coding a client to receive SES events.
+- ** Coding push notifications in A2A
+
+### Section 6: Workshop! Building a SIM Activation AI Chatbot (Telco Usecase)
+- ** Developing MCP tools.
+- ** Developing A2A AI Agent.
+- ** Invoking A2A AI Agent from Javascript.
+- ** Securing A2A AI Agent with Google (OAuth)
 ### Section 6: Course Wrap-Up
-- **Lecture 35:** Ethical Considerations of MCP  
+- ** Ethical Considerations of MCP  
 
 ---
 

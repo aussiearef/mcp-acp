@@ -57,4 +57,4 @@ This GitHub repository belongs to an online course called
 ## Enroll Now  
 If you have not enrolled yet, use the link below to join the course and put yourself at the forefront of AI:  
 
-👉 [Enroll in Mastering MCP and ACP in AI Agents](https://www.udemy.com/course/mcp-and-acp-ai-agents/?referralCode=796D178806E9010D7917)
+👉 [Enroll in Mastering MCP and ACP in AI Agents](https://www.udemy.com/course/mcp-and-a2a-ai-agents/?referralCode=796D178806E9010D7917)

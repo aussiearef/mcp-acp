@@ -1,4 +1,4 @@
-# Mastering MCP in AI Agents
+# Mastering MCP and A2A for Smarter AI Agents
 
 ![Course Banner](https://img-c.udemycdn.com/course/750x422/6682461_0046_2.jpg)
 

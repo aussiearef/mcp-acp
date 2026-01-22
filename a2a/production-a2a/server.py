@@ -7,7 +7,7 @@ from opentelemetry.sdk.resources import Resource
 
 from a2a.server.apps import A2AFastAPIApplication
 from a2a.server.request_handlers import DefaultRequestHandler
-from RedisTaskStore import RedisTaskStore
+from RedisTaskStore import RedisTaskStore # Just for demo
 from a2a.server.tasks import InMemoryTaskStore
 from a2a.types import AgentCard, AgentCapabilities, AgentSkill
 from executor import HelloWorldAgentExecutor

@@ -1,4 +1,4 @@
-from mcp.server.fastmcp import Context, FastMCP
+from fastmcp import FastMCP, Context
 from mcp.types import SamplingMessage, TextContent
 
 mcp = FastMCP(name="Sampling Example")

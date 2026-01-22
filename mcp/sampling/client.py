@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from openai import AsyncOpenAI 
 from mcp import ClientSession,types
-from mcp.client.streamable_http import streamablehttp_client
+from mcp.client.streamable_http import streamable_http_client
 from mcp.types import TextContent
 from mcp.shared.context import RequestContext
 
@@ -33,7 +33,7 @@ async def sampling_handler(context: RequestContext, params: types.CreateMessageR
 async def main():
     server_url = "http://localhost:8000/mcp"
     topic = input("Enter a topic for a poen:")
-    async with streamablehttp_client(server_url) as (
+    async with streamable_http_client(server_url) as (
         read_stream,
         write_stream,
         _, 

@@ -1,4 +1,4 @@
-from mcp.server.fastmcp import FastMCP, Context
+from fastmcp import FastMCP, Context
 from pydantic import BaseModel
 import asyncio
 import redis

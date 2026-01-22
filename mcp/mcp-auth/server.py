@@ -1,4 +1,4 @@
-from mcp.server.fastmcp import FastMCP 
+from fastmcp import FastMCP
 from mcp import McpError
 from fastmcp.server.dependencies import get_http_headers
 from pydantic import BaseModel

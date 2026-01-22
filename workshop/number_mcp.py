@@ -1,5 +1,5 @@
 # MCP tool to get the status of a mobile number (in Australian format)
-from mcp.server.fastmcp import FastMCP 
+from fastmcp import FastMCP 
 from pydantic import BaseModel
 import asyncio
 import sqlite3
